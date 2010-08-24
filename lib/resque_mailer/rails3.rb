@@ -34,7 +34,9 @@ module Resque
       end
 
       def perform(action, *args)
-        Rails3MailerProxy.new(self, action, *args).deliver!
+        # Action comes from resque as {"json_class"=>"Symbol", "s"=>"the_mailer_method_name"} instead of the symbol
+        action_sym = (action.is_a? Hash) ? action['s'].to_sym : action
+        Rails3MailerProxy.new(self, action_sym, *args).deliver!
       end
 
     end
